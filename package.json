@@ -1,0 +1,14 @@
+{
+  "name": "project",
+  "version": "0.0.1",
+  "description": "Tool for multirepo git based projects",
+  "main": "index.js",
+  "author": "MadridianFox",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^5.0.0",
+    "jsonschema": "^1.2.6",
+    "winston": "^3.2.1",
+    "yaml": "^1.9.1"
+  }
+}
