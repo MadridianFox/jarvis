@@ -31,7 +31,13 @@ function configureLogger(verbose) {
                 ),
             }),
         ]
-    })
+    });
+
+    process.on('uncaughtException', function (err) {
+        winstonLogger.error(`Uncaught exception: ${err.message}`, err, () => {
+            process.exit(1);
+        });
+    });
 }
 
 /**

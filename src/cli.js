@@ -1,3 +1,6 @@
+const {logger} = require('./logger');
+const {ConfigError} = require('./config');
+
 /**
  * Get option value from "commander object"
  * @param {string} name
@@ -67,9 +70,25 @@ function getConfigOption(options) {
     return filename;
 }
 
+function actionWrapper(callback) {
+    return async function (...args) {
+        try {
+            await callback(...args);
+            logger().info('Finished', () => process.exit());
+        } catch (e) {
+            if (e instanceof ConfigError) {
+                logger().error(`Config error: ${e.message}`, () => process.exit(1));
+            } else {
+                logger().error(e, () => process.exit(1));
+            }
+        }
+    };
+}
+
 module.exports = {
     parseFilter,
     getOption,
     getFilterOption,
     getConfigOption,
+    actionWrapper,
 };

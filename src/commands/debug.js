@@ -1,16 +1,15 @@
-const {getOption, getFilterOption, getConfigOption} = require("../cli");
+const {getOption, getFilterOption, getConfigOption, actionWrapper} = require("../cli");
 const {configureLogger, logger} = require('../logger');
 const {exec} = require('../shell');
 const {readConfig} = require('../config');
 
-module.exports = async options => {
-    const filter = getFilterOption(options);
-    const configFile = getConfigOption(options);
-
-    const config = readConfig(configFile);
-    console.log(config);
-
+module.exports = actionWrapper(async options => {
     configureLogger(getOption('verbose', options, false));
+
+    const filter = getFilterOption(options);
+
+    const configFile = getConfigOption(options);
+    const config = readConfig(configFile);
 
     logger().info('info message');
     logger().debug('debug message');
@@ -27,4 +26,4 @@ module.exports = async options => {
     } catch (e) {
         logger().error(e.stdout.trim());
     }
-};
+});

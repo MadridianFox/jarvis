@@ -21,6 +21,8 @@ const schema = {
     },
 };
 
+class ConfigError extends Error {}
+
 /**
  * Read config file, validate and return object
  * @param {string} filename
@@ -29,17 +31,32 @@ const schema = {
 function readConfig(filename) {
     let configString = fs.readFileSync(filename);
     let config = yaml.parse(configString.toString());
-    new Validator().validate(config, schema, {throwError: true});
+    try {
+        new Validator().validate(config, schema, {throwError: true});
+    } catch (e) {
+        throw new ConfigError(e.stack.replace('instance.', ''));
+    }
     return config;
 }
 
+/**
+ * Evaluate regular string as template
+ * @param {string} template
+ * @param {Object} params
+ * @returns {*}
+ */
 function runTemplate(template, params) {
     let keys = Object.keys(params);
     let values = Object.values(params);
-    return new Function(...keys, `return \`${template}\`;`)(...values);
+    try {
+        return new Function(...keys, `return \`${template}\`;`)(...values);
+    } catch (e) {
+        throw new ConfigError(e.message);
+    }
 }
 
 module.exports = {
     readConfig,
     runTemplate,
+    ConfigError,
 };
