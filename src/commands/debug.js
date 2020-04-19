@@ -1,29 +1,17 @@
 const {getOption, getFilterOption, getConfigOption, actionWrapper} = require("../cli");
-const {configureLogger, logger} = require('../logger');
-const {exec} = require('../shell');
+const {configureLogger} = require('../logger');
 const {readConfig} = require('../config');
+const repository = require('../repository');
 
 module.exports = actionWrapper(async options => {
     configureLogger(getOption('verbose', options, false));
 
-    const filter = getFilterOption(options);
-
     const configFile = getConfigOption(options);
     const config = readConfig(configFile);
+    const filter = getFilterOption(options);
 
-    logger().info('info message');
-    logger().debug('debug message');
-    logger().warn('warn message');
-    logger().error('error message');
-
-    console.log(filter, config);
-
-    let {stdout} = await exec('/tmp','echo "no error"');
-    logger().info(stdout.trim());
-
-    try {
-        await exec('/tmp','echo "error"; exit 1');
-    } catch (e) {
-        logger().error(e.stdout.trim());
+    let repositories = repository.byFilter(config, filter);
+    for (let repo of repositories) {
+        console.log(repository.getPath(config, repo, 'ananas'));
     }
 });

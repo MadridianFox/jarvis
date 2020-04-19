@@ -2,6 +2,13 @@ const fs = require('fs');
 const yaml = require('yaml');
 const {Validator} = require('jsonschema');
 
+/**
+ * @typedef ProjectConfig
+ * @type {Object}
+ * @property {string} path
+ * @property {Array<Repository>} repositories
+ */
+
 const schema = {
     type: 'object',
     properties: {
@@ -26,7 +33,7 @@ class ConfigError extends Error {}
 /**
  * Read config file, validate and return object
  * @param {string} filename
- * @returns {Object}
+ * @returns {ProjectConfig}
  */
 function readConfig(filename) {
     let configString = fs.readFileSync(filename);
