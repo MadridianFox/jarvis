@@ -1,7 +1,8 @@
 const {getOption, getFilterOption, getConfigOption} = require("../cli");
 const {configureLogger, logger} = require('../logger');
+const {exec} = require('../shell');
 
-module.exports = options => {
+module.exports = async options => {
     const filter = getFilterOption(options);
     const config = getConfigOption(options);
     configureLogger(getOption('verbose', options, false));
@@ -12,4 +13,13 @@ module.exports = options => {
     logger().error('error message');
 
     console.log(filter, config);
+
+    let {stdout} = await exec('/tmp','echo "no error"');
+    logger().info(stdout.trim());
+
+    try {
+        await exec('/tmp','echo "error"; exit 1');
+    } catch (e) {
+        logger().error(e.stdout.trim());
+    }
 };
