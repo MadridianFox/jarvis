@@ -1,10 +1,15 @@
 const {getOption, getFilterOption, getConfigOption} = require("../cli");
 const {configureLogger, logger} = require('../logger');
 const {exec} = require('../shell');
+const {readConfig} = require('../config');
 
 module.exports = async options => {
     const filter = getFilterOption(options);
-    const config = getConfigOption(options);
+    const configFile = getConfigOption(options);
+
+    const config = readConfig(configFile);
+    console.log(config);
+
     configureLogger(getOption('verbose', options, false));
 
     logger().info('info message');

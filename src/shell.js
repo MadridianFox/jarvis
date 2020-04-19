@@ -2,7 +2,7 @@ const nativeExec = require('child_process').exec;
 const {logger} = require('./logger');
 
 function logShellData(data) {
-    logger().debug(data);
+    logger().debug(data.trim());
 }
 
 /**
