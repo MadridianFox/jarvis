@@ -1,14 +1,5 @@
 const {createLogger, transports, format} = require('winston');
-const {combine, timestamp, printf, colorize} = format;
-
-const colorizer = colorize({
-    colors: {
-        info: 'white',
-        debug: 'gray',
-        warn: 'yellow',
-        error: 'red'
-    }
-});
+const {combine, timestamp, printf} = format;
 
 let winstonLogger;
 
@@ -19,9 +10,6 @@ function configureLogger(verbose) {
     winstonLogger = createLogger({
         level: verbose ? 'debug' : 'info',
         transports: [
-            new transports.Console({
-                format: printf(({message, level}) => colorizer.colorize(level, message)),
-            }),
             new transports.File({
                 level: 'debug',
                 filename: 'project.log',

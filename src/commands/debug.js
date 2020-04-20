@@ -2,6 +2,7 @@ const {getOption, getFilterOption, getConfigOption, actionWrapper} = require("..
 const {configureLogger} = require('../logger');
 const {readConfig} = require('../config');
 const repository = require('../repository');
+const {print, endStatus, nextLine} = require('../output');
 
 module.exports = actionWrapper(async options => {
     configureLogger(getOption('verbose', options, false));
@@ -11,7 +12,11 @@ module.exports = actionWrapper(async options => {
     const filter = getFilterOption(options);
 
     let repositories = repository.byFilter(config, filter);
+
     for (let repo of repositories) {
-        console.log(repository.getPath(config, repo, 'ananas'));
+        print(repo.name, 10);
+        print('banana', 10);
+        endStatus('WARNING');
+        nextLine();
     }
 });

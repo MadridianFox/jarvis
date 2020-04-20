@@ -8,6 +8,7 @@
   "dependencies": {
     "commander": "^5.0.0",
     "jsonschema": "^1.2.6",
+    "terminal-kit": "^1.35.2",
     "winston": "^3.2.1",
     "yaml": "^1.9.1"
   }
