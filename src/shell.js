@@ -1,6 +1,14 @@
 const nativeExec = require('child_process').exec;
 const {logger} = require('./logger');
 
+/**
+ * @typedef ExecResult
+ * @type {Object}
+ * @property {string} stdout
+ * @property {string} stderr
+ * @property {Object} error
+ */
+
 function logShellData(data) {
     logger().debug(data.trim());
 }
@@ -9,7 +17,7 @@ function logShellData(data) {
  * Execute shell command
  * @param {string} cwd
  * @param {string} shellCommand
- * @returns {Promise<{stdout: string, stderr: string, error: Object}>}
+ * @returns {Promise<ExecResult>}
  */
 async function exec(cwd, shellCommand) {
     return new Promise(function (resolve, reject) {

@@ -19,7 +19,4 @@ program.command('status <instance>')
     .description('show info about repositories')
     .action(require('./src/commands/status'));
 
-program.command('debug')
-    .action(require('./src/commands/debug'));
-
 program.parse(process.argv);

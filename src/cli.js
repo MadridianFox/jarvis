@@ -1,6 +1,3 @@
-const {logger} = require('./logger');
-const {ConfigError} = require('./config');
-
 /**
  * Get option value from "commander object"
  * @param {string} name
@@ -41,54 +38,9 @@ function parseFilter(term, previous) {
     return previous;
 }
 
-/**
- * Get repository filter from "commander object"
- * @param {Object} options
- * @returns {Object}
- */
-function getFilterOption(options) {
-    const filter = getOption('label', options, false);
-    if (Object.entries(filter).length < 1) {
-        throw new Error('At least one condition needed. For work on all repositories use "-l all" option.');
-    }
-    return filter;
-}
 
-/**
- * Get project file path
- * @param {Object} options
- * @returns {string}
- */
-function getConfigOption(options) {
-    let filename = getOption('config', options, false);
-    if (!filename) {
-        filename = process.env.JARVIS_FILE;
-    }
-    if (!filename) {
-        throw new Error('Project file needed. You can provide path to file via "-c <file>" option or in JARVIS_FILE env variable.')
-    }
-    return filename;
-}
-
-function actionWrapper(callback) {
-    return async function (...args) {
-        try {
-            await callback(...args);
-            logger().info('Finished', () => process.exit());
-        } catch (e) {
-            if (e instanceof ConfigError) {
-                logger().error(`Config error: ${e.message}`, () => process.exit(1));
-            } else {
-                logger().error(e, () => process.exit(1));
-            }
-        }
-    };
-}
 
 module.exports = {
     parseFilter,
     getOption,
-    getFilterOption,
-    getConfigOption,
-    actionWrapper,
 };

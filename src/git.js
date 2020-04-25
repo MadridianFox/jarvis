@@ -1,6 +1,20 @@
 const fs = require('fs');
 const {exec} = require('./shell');
 
+/**
+ * @typedef Changes
+ * @type {Object}
+ * @property {Number} staged
+ * @property {Number} unTracked
+ * @property {Number} unStaged
+ */
+
+/**
+ * Clone repository to path
+ * @param {string} url
+ * @param {string} path
+ * @returns {Promise<ExecResult>}
+ */
 async function clone(url, path) {
     if (fs.existsSync(path)) {
         return;
@@ -9,11 +23,22 @@ async function clone(url, path) {
     return await exec('/tmp', `git clone ${url} ${path}`);
 }
 
+/**
+ * Get branch of repository in path
+ * @param {string} path
+ * @returns {Promise<string>}
+ */
 async function getBranch(path) {
     let {stdout: rawBranch} = await exec(path, "git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \\( *\\)/\\1/'");
     return rawBranch.trim();
 }
 
+/**
+ * Pull branch from origin
+ * @param {string} path
+ * @param {string} branch
+ * @returns {Promise<number>}
+ */
 async function pull(path, branch) {
     let {stdout: status} = await exec(path, `git pull origin ${branch}`);
     if (status.trim() === 'Already up to date.') {
@@ -22,6 +47,11 @@ async function pull(path, branch) {
     return 1;
 }
 
+/**
+ * Count changed files in repository
+ * @param {string} path
+ * @returns {Promise<Changes>}
+ */
 async function changes(path) {
     let {stdout} = await exec(path, 'git status --porcelain');
     let result = {
@@ -47,7 +77,11 @@ async function changes(path) {
     return result;
 }
 
-
+/**
+ * Do git reset --hard in repository
+ * @param path
+ * @returns {Promise<void>}
+ */
 async function reset(path) {
     await exec(path, 'git add . && git reset --hard');
 }

@@ -1,5 +1,15 @@
 const {createTerminal} = require('terminal-kit');
 
+/**
+ * @typedef Printer
+ * @type {Object}
+ * @property {function (str: string)} white
+ * @property {function (str: string)} red
+ * @property {function (str: string)} yellow
+ * @property {function (str: string)} green
+ */
+
+
 let terminal;
 
 function getOutput() {
@@ -11,17 +21,20 @@ function getOutput() {
 }
 
 /**
+ * Cut string if it too big and add spaces on right if it too small
  * @param {string} str
  * @param {Number} width
+ * @returns {string}
  */
-function print(str, width) {
-    getOutput().white(str.substr(0, width - 1).padEnd(width, ' '));
-}
-
 function toWidth(str, width) {
     return str.substr(0, width - 1).padEnd(width, ' ');
 }
 
+/**
+ * Get printer for column with width
+ * @param {Number} width
+ * @returns {Printer}
+ */
 function column(width) {
     return {
         white: str => getOutput().white(toWidth(str, width)),
@@ -32,6 +45,7 @@ function column(width) {
 }
 
 /**
+ * Print status on right end of line
  * @param {string} msg
  */
 function endStatus(msg) {
@@ -50,6 +64,11 @@ function endStatus(msg) {
     term.white(']');
 }
 
+/**
+ * Print status and add line end after callback execution
+ * @param {function()} callback
+ * @returns {Promise<void>}
+ */
 async function line(callback) {
     let status = await callback();
     if (status) {
@@ -59,8 +78,6 @@ async function line(callback) {
 }
 
 module.exports = {
-    print,
-    endStatus,
-    line,
-    column
+    column,
+    line
 };
