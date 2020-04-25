@@ -37,12 +37,16 @@ function endStatus(msg) {
     term.white(']');
 }
 
-function nextLine() {
-    getOutput().nextLine();
+async function line(callback) {
+    let status = await callback();
+    if (status) {
+        endStatus(status);
+    }
+    console.log('');
 }
 
 module.exports = {
     print,
     endStatus,
-    nextLine,
+    line,
 };

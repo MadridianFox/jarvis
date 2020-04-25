@@ -3,15 +3,11 @@ const {combine, timestamp, printf} = format;
 
 let winstonLogger;
 
-/**
- * @param {Boolean} verbose
- */
-function configureLogger(verbose) {
+function configureLogger() {
     winstonLogger = createLogger({
-        level: verbose ? 'debug' : 'info',
+        level: 'debug',
         transports: [
             new transports.File({
-                level: 'debug',
                 filename: 'project.log',
                 format: combine(
                     timestamp(),
