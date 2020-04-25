@@ -1,4 +1,4 @@
-const {withFilter} = require("../middlewares/withFilter");
+const {withFilter} = require("../middlewares/with-filter");
 const {withConfig} = require("../middlewares/with-config");
 const {withLogger} = require("../middlewares/with-logger");
 const {column, line} = require('../output');

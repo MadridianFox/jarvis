@@ -1,22 +1,26 @@
 const {withFilter} = require("../middlewares/with-filter");
-const {withLogger} = require("../middlewares/with-logger");
 const {withConfig} = require("../middlewares/with-config");
+const {withLogger} = require("../middlewares/with-logger");
 const {column, line} = require('../output');
 const git = require('../git');
 const repository = require('../repository');
 
-module.exports = (instance, options) => {
-    return withLogger(async logger => {
+module.exports = (instance, newBranch, options) => {
+    return withLogger(async () => {
         return withConfig(options, async config => {
             return withFilter(options, async filter => {
                 let repositories = repository.byFilter(config, filter);
                 for (let repo of repositories) {
+                    let path = repository.getPath(config, repo, instance),
+                        branch = await git.getBranch(path);
                     await line(async () => {
-                        logger().info(`Start cloning ${repo.name}`);
                         column(15).white(repo.name);
-                        await git.clone(repo.url, repository.getPath(config, repo, instance));
-                        logger().info(`Done`);
-                        return 'OK';
+                        if (branch === newBranch) {
+                            return 'SKIP';
+                        } else {
+                            await git.checkout(path, newBranch);
+                            return 'OK';
+                        }
                     });
                 }
             });

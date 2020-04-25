@@ -13,7 +13,7 @@ const {exec} = require('./shell');
  * Clone repository to path
  * @param {string} url
  * @param {string} path
- * @returns {Promise<ExecResult>}
+ * @returns {Promise<ExecResult|undefined>}
  */
 async function clone(url, path) {
     if (fs.existsSync(path)) {
@@ -80,10 +80,20 @@ async function changes(path) {
 /**
  * Do git reset --hard in repository
  * @param path
- * @returns {Promise<void>}
+ * @returns {Promise<ExecResult>}
  */
 async function reset(path) {
-    await exec(path, 'git add . && git reset --hard');
+    return await exec(path, 'git add . && git reset --hard');
+}
+
+/**
+ * Checkout repository to branch. If branch doesn't exists, create it
+ * @param {string} path
+ * @param {string} branch
+ * @returns {Promise<ExecResult>}
+ */
+async function checkout(path, branch) {
+    return await exec(path, `git checkout -B ${branch}`);
 }
 
 module.exports = {
@@ -92,4 +102,5 @@ module.exports = {
     pull,
     reset,
     changes,
+    checkout,
 };

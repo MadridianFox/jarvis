@@ -19,4 +19,9 @@ program.command('status <instance>')
     .description('show info about repositories')
     .action(require('./src/commands/status'));
 
+program.command('to-branch <instance> <branch>')
+    .description('checkout selected repositories to branch')
+    .action(require('./src/commands/to-branch'));
+
+
 program.parse(process.argv);
