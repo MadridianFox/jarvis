@@ -22,6 +22,32 @@ async function pull(path, branch) {
     return 1;
 }
 
+async function changes(path) {
+    let {stdout} = await exec(path, 'git status --porcelain');
+    let result = {
+        unTracked: 0,
+        staged: 0,
+        unStaged: 0
+    };
+    for (let line of stdout.split("\n")) {
+        if (!line) continue;
+        let X = line.substr(0, 1),
+            Y = line.substr(1, 1);
+        switch (true) {
+            case (X === '?' && Y === '?'):
+                result.unTracked++;
+                break;
+            case (X !== ' ' && Y === ' '):
+                result.staged++;
+                break;
+            default:
+                result.unStaged++;
+        }
+    }
+    return result;
+}
+
+
 async function reset(path) {
     await exec(path, 'git add . && git reset --hard');
 }
@@ -31,4 +57,5 @@ module.exports = {
     clone,
     pull,
     reset,
+    changes,
 };
